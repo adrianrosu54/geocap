@@ -2,9 +2,9 @@
 **.env
 
 # backend
-backend/.venv/*
-backend/data/*
-backend/images/*
+backend/.venv
+backend/data
+backend/images
 
 **.db*
 **.pyc

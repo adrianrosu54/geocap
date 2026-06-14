@@ -1,8 +1,9 @@
 import sqlite3
 from sqlalchemy import Engine, event
-from sqlmodel import Session, create_engine
+from sqlmodel import SQLModel, Session, create_engine
 
-from .models import SQLModel
+import app.models.capture
+import app.models.user
 
 SQLITE_FILE_NAME = "database.db"
 SQLITE_URL = f"sqlite:///{SQLITE_FILE_NAME}"
