@@ -1,6 +1,10 @@
 # environment
 **.env
 
-# backend specific
+# backend
+backend/.venv/*
+backend/data/*
+backend/images/*
+
 **.db*
 **.pyc
