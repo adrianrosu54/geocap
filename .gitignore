@@ -6,5 +6,7 @@ backend/.venv
 backend/data
 backend/images
 
+**.egg-info
+
 **.db*
 **.pyc
