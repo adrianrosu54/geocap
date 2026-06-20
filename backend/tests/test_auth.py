@@ -21,11 +21,13 @@ def test_auth_register(client: TestClient):
 
 
 def test_auth_login(test_user: tuple[User, UserCreate], client: TestClient):
+    user = test_user[1]
+
     response = client.post(
         "/auth/login",
         json={
-            "identifier": test_user[1].username,
-            "password": test_user[1].password,
+            "identifier": user.username,
+            "password": user.password,
         },
     )
 

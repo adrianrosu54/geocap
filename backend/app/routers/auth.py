@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Depends, Form
 from sqlmodel import Session
 
 from app.database import get_session
@@ -13,13 +13,15 @@ router = APIRouter(prefix="/auth")
 
 @router.post("/register", response_model=UserRead)
 async def post_register(
-    user: Annotated[UserCreate, Body()], session: Session = Depends(get_session)
+    user_create: Annotated[UserCreate, Form()],
+    session: Annotated[Session, Depends(get_session)],
 ):
-    return register_user(user, session)
+    return register_user(user_create, session)
 
 
 @router.post("/login", response_model=Token)
 async def post_login(
-    request: Annotated[LoginRequest, Body()], session: Session = Depends(get_session)
+    request: Annotated[LoginRequest, Form()],
+    session: Annotated[Session, Depends(get_session)],
 ):
     return login_user(request, session)

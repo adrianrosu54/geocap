@@ -8,8 +8,7 @@ class CaptureBase(SQLModel):
     latitude: float
     longitude: float
     accuracy: float
-    timestamp: datetime
-    timezone: str  # IANA timezone string
+    description: str
 
 
 class Capture(CaptureBase, table=True):

@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 import pytest
 
 from fastapi.testclient import TestClient
@@ -7,12 +5,9 @@ from sqlmodel import SQLModel, Session, StaticPool, create_engine
 
 from app.database import get_session
 from app.main import app as application
-import app.models.user
-import app.models.capture
-from app.schemas.auth import TokenPayload
 from app.schemas.user import UserCreate
 from app.models.user import User
-from app.services.auth import password_hash, register_user, verify_token
+from app.services.auth import password_hash
 
 TEST_DB_URL = "sqlite:///:memory:"
 
