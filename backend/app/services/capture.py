@@ -1,8 +1,8 @@
 from typing import Annotated
 
 from fastapi import File, HTTPException, UploadFile, status
-from sqlmodel import Session
-from sqlalchemy.exc import DatabaseError
+from sqlmodel import Session, and_, select
+from sqlalchemy.exc import DatabaseError, NoResultFound
 
 from app.models.capture import Capture
 from app.schemas.capture import CaptureCreate
@@ -49,3 +49,29 @@ async def upload_capture(
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Couldn't upload metadata")
 
     return capture
+
+
+def read_captures(user_id: int, session: Session):
+    try:
+        captures = session.exec(select(Capture).where(Capture.user_id == user_id)).all()
+        return captures
+    except DatabaseError:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Couldn't read captures")
+
+
+def fetch_capture_by_id(capture_id: int, user_id: int, session: Session):
+    try:
+        capture = session.exec(
+            select(Capture).where(
+                and_(Capture.user_id == user_id, Capture.id == capture_id)
+            )
+        ).first()
+
+        if not capture:
+            raise NoResultFound()
+
+        return capture
+    except NoResultFound:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "No captures found")
+    except DatabaseError:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Couldn't read captures")

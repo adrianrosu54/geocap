@@ -119,3 +119,4 @@ def override_settings(monkeypatch: pytest.MonkeyPatch, test_settings: Settings):
     """
     monkeypatch.setattr("app.config.get_settings", lambda: test_settings)
     monkeypatch.setattr("app.storage.get_settings", lambda: test_settings)
+    monkeypatch.setattr("app.main.get_settings", lambda: test_settings)
