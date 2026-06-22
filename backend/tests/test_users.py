@@ -1,7 +1,8 @@
 from fastapi.testclient import TestClient
 import jwt
 
-from app.services.token_utils import JWT_ALGORITHM, JWT_SECRET
+from app.config import get_settings
+from app.services.token_utils import JWT_ALGORITHM
 
 
 def test_get_me(auth_client: TestClient):
@@ -9,7 +10,9 @@ def test_get_me(auth_client: TestClient):
     data = response.json()
 
     decoded = jwt.decode(
-        auth_client.headers["Authorization"][7:], JWT_SECRET, algorithms=JWT_ALGORITHM
+        auth_client.headers["Authorization"][7:],
+        get_settings().jwt_secret,
+        algorithms=JWT_ALGORITHM,
     )
 
     assert int(data["id"]) == int(decoded["sub"])

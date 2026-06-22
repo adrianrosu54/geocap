@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 import io
 
@@ -6,6 +8,7 @@ from PIL import Image
 from sqlalchemy import Engine
 from sqlmodel import SQLModel, Session, StaticPool, create_engine
 
+from app.config import Settings
 from app.database import get_session
 from app.main import app as application
 from app.schemas.auth import Token
@@ -97,3 +100,22 @@ def image_file_fixture():
     buf.seek(0)
 
     return buf
+
+
+@pytest.fixture
+def test_settings(tmp_path: Path):
+    return Settings(
+        jwt_secret="101010101010101010101010101010101010",
+        jwt_exp_minutes=10,
+        image_upload_dir=tmp_path,
+    )
+
+
+@pytest.fixture(autouse=True)
+def override_settings(monkeypatch: pytest.MonkeyPatch, test_settings: Settings):
+    """
+    Overrides the main settings class and changes the upload directory to a
+    temporary file
+    """
+    monkeypatch.setattr("app.config.get_settings", lambda: test_settings)
+    monkeypatch.setattr("app.storage.get_settings", lambda: test_settings)
