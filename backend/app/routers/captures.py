@@ -4,10 +4,13 @@ from fastapi import APIRouter, Depends, Form, Path, UploadFile
 from sqlmodel import Session
 
 from app.database import get_session
+from app.models.capture import Capture
 from app.schemas.capture import CaptureCreate, CaptureRead
 from app.services.capture import (
     fetch_capture_by_id,
     read_captures,
+    remove_capture,
+    update_capture,
     upload_capture,
     validate_image_file,
 )
@@ -54,3 +57,36 @@ async def get_capture(
     session: Annotated[Session, Depends(get_session)],
 ):
     return fetch_capture_by_id(capture_id, user_id, session)
+
+
+@router.put("/{capture_id}", response_model=CaptureRead)
+async def put_capture(
+    capture_id: Annotated[int, Path()],
+    latitude: Annotated[float, Form()],
+    longitude: Annotated[float, Form()],
+    accuracy: Annotated[float, Form()],
+    description: Annotated[str, Form()],
+    image_file: Annotated[UploadFile, Depends(validate_image_file)],
+    user_id: Annotated[int, Depends(validate_user_id)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    return await update_capture(
+        image_file,
+        capture_id,
+        CaptureCreate(
+            latitude=latitude,
+            longitude=longitude,
+            accuracy=accuracy,
+            description=description,
+        ),
+        user_id,
+        session,
+    )
+
+
+@router.delete("/{capture_id}")
+async def delete_capture(
+    capture: Annotated[Capture, Depends(get_capture)],
+    session: Annotated[Session, Depends(get_session)],
+):
+    return remove_capture(capture, session)

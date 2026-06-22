@@ -1,8 +1,10 @@
 from io import BytesIO
+from pathlib import Path
 
+from app.models.capture import Capture
 from conftest import TestClient, example_capture_creation
 
-capture_endpoint = "/captures"
+from conftest import capture_endpoint
 
 
 def test_post_captures(image_file: BytesIO, auth_client: TestClient):
@@ -72,3 +74,39 @@ def test_get_capture_missing(auth_client: TestClient):
     response = auth_client.get(f"{capture_endpoint}/1")
 
     assert response.status_code == 404
+
+
+def test_put_capture(
+    added_capture: Capture, image_file: BytesIO, auth_client: TestClient
+):
+    img = image_file.read()
+
+    example_capture_creation["description"] = "new description"
+
+    response = auth_client.put(
+        f"{capture_endpoint}/{added_capture.id}",
+        files={"image_file": ("image.jpg", img, "image/jpeg")},
+        data=example_capture_creation,
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+    print(data)
+    assert data["description"] == "new description"
+
+
+def test_delete_capture(image_file: BytesIO, auth_client: TestClient, tmp_path: Path):
+    img = image_file.read()
+
+    r1 = auth_client.post(
+        capture_endpoint,
+        files={"image_file": ("image.jpg", img, "image/jpeg")},
+        data=example_capture_creation,
+    )
+    assert r1.status_code == 200
+
+    response = auth_client.delete(f"{capture_endpoint}/1")
+
+    assert response.status_code == 200
+    assert not any(Path(tmp_path / "1").iterdir())

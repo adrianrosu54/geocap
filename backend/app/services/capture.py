@@ -75,3 +75,41 @@ def fetch_capture_by_id(capture_id: int, user_id: int, session: Session):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No captures found")
     except DatabaseError:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Couldn't read captures")
+
+
+async def update_capture(
+    image_file: UploadFile,
+    capture_id: int,
+    capture_create: CaptureCreate,
+    user_id: int,
+    session: Session,
+):
+    capture = session.exec(
+        select(Capture).where(
+            and_(Capture.user_id == user_id, Capture.id == capture_id)
+        )
+    ).first()
+
+    if capture:
+        delete_upload(capture.image_path)
+        data_to_update = capture_create.model_dump()
+        capture.sqlmodel_update(data_to_update)
+    else:
+        capture = Capture(**capture_create.model_dump(), id=capture_id)
+
+    session.add(capture)
+    await save_upload(image_file, user_id)
+    session.commit()
+
+    return capture
+
+
+def remove_capture(capture: Capture, session: Session):
+    try:
+        delete_upload(capture.image_path)
+
+        session.delete(capture)
+        session.commit()
+    except IOError:
+        session.rollback()
+        raise HTTPException(status.HTTP_424_FAILED_DEPENDENCY, "Failed to delete file")

@@ -11,10 +11,14 @@ from sqlmodel import SQLModel, Session, StaticPool, create_engine
 from app.config import Settings
 from app.database import get_session
 from app.main import app as application
+from app.models.capture import Capture
 from app.schemas.auth import Token
 from app.schemas.user import UserCreate
 from app.models.user import User
 from app.services.auth import password_hash
+
+capture_endpoint = "/captures"
+
 
 TEST_DB_URL = "sqlite:///:memory:"
 
@@ -100,6 +104,19 @@ def image_file_fixture():
     buf.seek(0)
 
     return buf
+
+
+@pytest.fixture(name="added_capture")
+def added_capture_fixture(image_file: io.BytesIO, auth_client: TestClient):
+    img = image_file.read()
+
+    response = auth_client.post(
+        capture_endpoint,
+        files={"image_file": ("image.jpg", img, "image/jpeg")},
+        data=example_capture_creation,
+    )
+
+    return Capture(**response.json())
 
 
 @pytest.fixture
