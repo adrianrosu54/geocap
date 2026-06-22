@@ -1,41 +1,48 @@
 import pytest
+import io
 
 from fastapi.testclient import TestClient
+from PIL import Image
+from sqlalchemy import Engine
 from sqlmodel import SQLModel, Session, StaticPool, create_engine
 
 from app.database import get_session
 from app.main import app as application
+from app.schemas.auth import Token
 from app.schemas.user import UserCreate
 from app.models.user import User
 from app.services.auth import password_hash
 
 TEST_DB_URL = "sqlite:///:memory:"
 
-example_registration = {
+example_user_creation = {
     "username": "johndoe",
     "email": "johndoe@example.com",
     "password": "secretpass",
 }
 
+example_capture_creation = {
+    "latitude": 34.052235,
+    "longitude": -118.243683,
+    "accuracy": 100,
+    "description": "Picture of the Pacific seaside",
+}
 
-engine = create_engine(
-    TEST_DB_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool
-)
+
+@pytest.fixture(name="engine")
+def engine_fixture():
+    engine = create_engine(
+        TEST_DB_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool
+    )
+    SQLModel.metadata.create_all(engine)
+    return engine
 
 
 @pytest.fixture(name="session")
-def session_fixture():
-    SQLModel.metadata.create_all(engine)
-
-    connection = engine.connect()
-    transaction = connection.begin()
-    session = Session(bind=connection)
-
-    yield session
-
-    session.close()
-    transaction.rollback()
-    connection.close()
+def session_fixture(engine: Engine):
+    with Session(engine) as session:
+        yield session
+        session.rollback()
 
 
 @pytest.fixture(name="client")
@@ -44,16 +51,34 @@ def client_fixture(session: Session):
         yield session
 
     application.dependency_overrides[get_session] = get_session_override
-    client = TestClient(application)
 
-    yield client
+    with TestClient(application) as client:
+        yield client
 
     application.dependency_overrides.clear()
 
 
-@pytest.fixture(name="test_user")
-def test_user_fixture(session: Session):
-    userLogin = UserCreate(**example_registration)
+@pytest.fixture(name="auth_client")
+def auth_client_fixture(user_data: tuple[User, str], client: TestClient):
+    user = user_data[0]
+    password = user_data[1]
+    response = client.post(
+        "/auth/login",
+        data={
+            "identifier": user.username,
+            "password": password,
+        },
+    )
+
+    token = Token(**response.json())
+    client.headers["Authorization"] = f"bearer {token.access_token}"
+
+    return client
+
+
+@pytest.fixture(name="user_data")
+def user_data_fixture(session: Session):
+    userLogin = UserCreate(**example_user_creation)
     user = User(
         **userLogin.model_dump(), password_hash=password_hash.hash(userLogin.password)
     )
@@ -61,18 +86,14 @@ def test_user_fixture(session: Session):
     session.add(user)
     session.commit()
     session.refresh(user)
-    return user, userLogin
+    return user, userLogin.password
 
 
-@pytest.fixture(name="auth_token")
-def auth_token_fixture(test_user: tuple[User, UserCreate], client: TestClient):
-    response = client.post(
-        "/auth/login",
-        json={
-            "identifier": test_user[1].username,
-            "password": test_user[1].password,
-        },
-    )
-    token = response.json()["access_token"]
+@pytest.fixture(name="image_file")
+def image_file_fixture():
+    buf = io.BytesIO()
+    img = Image.new("RGB", (100, 100), color=(255, 128, 0))
+    img.save(buf, format="JPEG")
+    buf.seek(0)
 
-    return token
+    return buf
