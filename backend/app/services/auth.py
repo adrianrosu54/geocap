@@ -26,13 +26,9 @@ def register_user(
     try:
         session.add(userdb)
         session.commit()
-    except IntegrityError as e:
+    except IntegrityError:
         session.rollback()
-        if "username" in str(e.orig):
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Username already taken!")
-        elif "email" in str(e.orig):
-            raise HTTPException(status.HTTP_400_BAD_REQUEST, "Email already in use!")
-        raise e
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Username already taken!")
     except DatabaseError:
         session.rollback()
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Couldn't register!")
@@ -44,7 +40,7 @@ def login_user(
     request: Annotated[LoginRequest, Form()],
     session: Annotated[Session, Depends(get_session)],
 ):
-    user = get_user_by_identifier(session, request.identifier)
+    user = get_user_by_identifier(session, request.username)
 
     if not user:
         # verify anyway to not respond too fast (security measure)

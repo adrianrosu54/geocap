@@ -12,14 +12,14 @@ def init_storage():
     get_settings().image_upload_dir.mkdir(parents=True, exist_ok=True)
 
 
-def get_user_dir(user_id: int):
+def get_user_dir(user_id: uuid.UUID):
     path = get_settings().image_upload_dir / str(user_id)
     path.mkdir(parents=True, exist_ok=True)
 
     return path
 
 
-async def save_upload(image_file: UploadFile, user_id: int):
+async def save_upload(image_file: UploadFile, user_id: uuid.UUID):
     extention = ALLOWED_EXTENSIONS[str(image_file.content_type)]
     filename = f"{uuid.uuid4()}{extention}"
 

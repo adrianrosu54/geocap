@@ -1,5 +1,6 @@
 from io import BytesIO
 from pathlib import Path
+from uuid import uuid4
 
 from app.models.capture import Capture
 from conftest import TestClient, example_capture_creation
@@ -64,14 +65,16 @@ def test_get_capture(image_file: BytesIO, auth_client: TestClient):
     )
     assert r1.status_code == 200
 
-    response = auth_client.get(f"{capture_endpoint}/1")
+    capture_id = r1.json()["id"]
+
+    response = auth_client.get(f"{capture_endpoint}/{capture_id}")
 
     assert response.status_code == 200
-    assert response.json()["id"] == 1
+    assert response.json()["id"] == capture_id
 
 
 def test_get_capture_missing(auth_client: TestClient):
-    response = auth_client.get(f"{capture_endpoint}/1")
+    response = auth_client.get(f"{capture_endpoint}/{uuid4()}")
 
     assert response.status_code == 404
 
@@ -92,7 +95,7 @@ def test_put_capture(
     assert response.status_code == 200
 
     data = response.json()
-    print(data)
+    # print(data)
     assert data["description"] == "new description"
 
 
@@ -106,7 +109,10 @@ def test_delete_capture(image_file: BytesIO, auth_client: TestClient, tmp_path: 
     )
     assert r1.status_code == 200
 
-    response = auth_client.delete(f"{capture_endpoint}/1")
+    capture_id = r1.json()["id"]
+    user_id = r1.json()["user_id"]
+
+    response = auth_client.delete(f"{capture_endpoint}/{capture_id}")
 
     assert response.status_code == 200
-    assert not any(Path(tmp_path / "1").iterdir())
+    assert not any(Path(tmp_path / user_id).iterdir())

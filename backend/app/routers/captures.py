@@ -1,4 +1,5 @@
 from typing import Annotated, List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, Path, UploadFile
 from sqlmodel import Session
@@ -52,8 +53,8 @@ async def get_captures(
 
 @router.get("/{capture_id}", response_model=CaptureRead)
 async def get_capture(
-    capture_id: Annotated[int, Path()],
-    user_id: Annotated[int, Depends(validate_user_id)],
+    capture_id: Annotated[UUID, Path()],
+    user_id: Annotated[UUID, Depends(validate_user_id)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return fetch_capture_by_id(capture_id, user_id, session)
@@ -61,13 +62,13 @@ async def get_capture(
 
 @router.put("/{capture_id}", response_model=CaptureRead)
 async def put_capture(
-    capture_id: Annotated[int, Path()],
+    capture_id: Annotated[UUID, Path()],
     latitude: Annotated[float, Form()],
     longitude: Annotated[float, Form()],
     accuracy: Annotated[float, Form()],
     description: Annotated[str, Form()],
     image_file: Annotated[UploadFile, Depends(validate_image_file)],
-    user_id: Annotated[int, Depends(validate_user_id)],
+    user_id: Annotated[UUID, Depends(validate_user_id)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return await update_capture(

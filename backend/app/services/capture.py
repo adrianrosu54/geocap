@@ -1,4 +1,5 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import File, HTTPException, UploadFile, status
 from sqlmodel import Session, and_, select
@@ -31,7 +32,7 @@ async def validate_image_file(
 async def upload_capture(
     image_file: UploadFile,
     capture_create: CaptureCreate,
-    user_id: int,
+    user_id: UUID,
     session: Session,
 ):
     capture_path = await save_upload(image_file, user_id)
@@ -51,7 +52,7 @@ async def upload_capture(
     return capture
 
 
-def read_captures(user_id: int, session: Session):
+def read_captures(user_id: UUID, session: Session):
     try:
         captures = session.exec(select(Capture).where(Capture.user_id == user_id)).all()
         return captures
@@ -59,7 +60,7 @@ def read_captures(user_id: int, session: Session):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "Couldn't read captures")
 
 
-def fetch_capture_by_id(capture_id: int, user_id: int, session: Session):
+def fetch_capture_by_id(capture_id: UUID, user_id: UUID, session: Session):
     try:
         capture = session.exec(
             select(Capture).where(
@@ -79,9 +80,9 @@ def fetch_capture_by_id(capture_id: int, user_id: int, session: Session):
 
 async def update_capture(
     image_file: UploadFile,
-    capture_id: int,
+    capture_id: UUID,
     capture_create: CaptureCreate,
-    user_id: int,
+    user_id: UUID,
     session: Session,
 ):
     capture = session.exec(

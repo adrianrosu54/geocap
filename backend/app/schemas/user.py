@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from ..models.user import UserBase
 
@@ -10,5 +11,5 @@ class UserCreate(UserBase):
 
 # user API output
 class UserRead(UserBase):
-    id: int
+    id: UUID
     created_at: datetime

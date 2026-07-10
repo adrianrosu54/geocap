@@ -18,7 +18,6 @@ def test_auth_register(client: TestClient):
     data: dict = response.json()
 
     assert data["username"] == "johndoe"
-    assert data["email"] == "johndoe@example.com"
 
 
 def test_auth_login(user_data: tuple[User, str], client: TestClient):
@@ -28,7 +27,7 @@ def test_auth_login(user_data: tuple[User, str], client: TestClient):
     response = client.post(
         "/auth/login",
         data={
-            "identifier": user.username,
+            "username": user.username,
             "password": password,
         },
     )
@@ -38,11 +37,6 @@ def test_auth_login(user_data: tuple[User, str], client: TestClient):
     data: dict = response.json()
 
     assert data["token_type"] == "bearer"
-    assert (
-        verify_token(
-            HTTPAuthorizationCredentials(
-                scheme="bearer", credentials=data["access_token"]
-            )
-        ).sub
-        == "1"
-    )
+    assert verify_token(
+        HTTPAuthorizationCredentials(scheme="bearer", credentials=data["access_token"])
+    ).sub == str(user.id)

@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi.testclient import TestClient
 import jwt
 
@@ -15,4 +16,4 @@ def test_get_me(auth_client: TestClient):
         algorithms=JWT_ALGORITHM,
     )
 
-    assert int(data["id"]) == int(decoded["sub"])
+    assert UUID(data["id"]) == UUID(decoded["sub"])

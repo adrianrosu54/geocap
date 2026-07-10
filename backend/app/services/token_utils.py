@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -13,7 +14,7 @@ JWT_ALGORITHM = "HS256"
 security_scheme = HTTPBearer()
 
 
-def create_access_token(subject: int | None):
+def create_access_token(subject: UUID):
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=get_settings().jwt_exp_minutes
     )
@@ -31,11 +32,12 @@ def verify_token(
 ):
     try:
         token = credentials.credentials
-        # print(f"Token: {token}")
-        payload = TokenPayload(
-            **jwt.decode(token, get_settings().jwt_secret, algorithms=[JWT_ALGORITHM])
+        decoded = jwt.decode(
+            token, get_settings().jwt_secret, algorithms=[JWT_ALGORITHM]
         )
-        # print(f"Payload: {payload}")
+        # print(f"Token: {token}")
+        payload = TokenPayload(**decoded)
+        # print(f"Payload: {payload.sub}")
 
         return payload
     except jwt.ExpiredSignatureError:

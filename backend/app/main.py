@@ -8,11 +8,12 @@ from app.database import create_db_and_tables
 from app.routers import auth, users, captures
 from app.storage import init_storage
 
+init_storage()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db_and_tables()
-    init_storage()
     yield
 
 

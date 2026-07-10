@@ -24,7 +24,6 @@ TEST_DB_URL = "sqlite:///:memory:"
 
 example_user_creation = {
     "username": "johndoe",
-    "email": "johndoe@example.com",
     "password": "secretpass",
 }
 
@@ -72,13 +71,13 @@ def auth_client_fixture(user_data: tuple[User, str], client: TestClient):
     response = client.post(
         "/auth/login",
         data={
-            "identifier": user.username,
+            "username": user.username,
             "password": password,
         },
     )
 
     token = Token(**response.json())
-    client.headers["Authorization"] = f"bearer {token.access_token}"
+    client.headers["Authorization"] = f"Bearer {token.access_token}"
 
     return client
 

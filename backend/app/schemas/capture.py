@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from ..models.capture import CaptureBase
 
@@ -8,7 +9,7 @@ class CaptureCreate(CaptureBase):
 
 
 class CaptureRead(CaptureBase):
-    id: int
-    user_id: int
+    id: UUID
+    user_id: UUID
     image_path: str
     created_at: datetime
