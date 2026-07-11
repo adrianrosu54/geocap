@@ -21,10 +21,15 @@
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/router-plugin": "^1.132.0",
+    "leaflet": "^1.9.4",
     "lucide-react": "^0.545.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.18"
+    "react-hook-form": "^7.81.0",
+    "react-leaflet": "^5.0.0",
+    "tailwindcss": "^4.1.18",
+    "zod": "^4.4.3",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.16",
@@ -34,6 +39,7 @@
     "@tanstack/router-plugin": "latest",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.0",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
@@ -50,5 +56,8 @@
       "esbuild",
       "lightningcss"
     ]
+  },
+  "allowScripts": {
+    "unrs-resolver@1.12.2": true
   }
 }

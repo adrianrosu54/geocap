@@ -36,7 +36,7 @@ def test_auth_login(user_data: tuple[User, str], client: TestClient):
 
     data: dict = response.json()
 
-    assert data["token_type"] == "bearer"
+    assert data["token_type"] == "Bearer"
     assert verify_token(
-        HTTPAuthorizationCredentials(scheme="bearer", credentials=data["access_token"])
+        HTTPAuthorizationCredentials(scheme="Bearer", credentials=data["access_token"])
     ).sub == str(user.id)
