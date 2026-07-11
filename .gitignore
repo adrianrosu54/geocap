@@ -10,3 +10,19 @@ backend/images
 
 **.db*
 **.pyc
+
+## frontend
+frontend/node_modules
+frontend/.DS_Store
+frontend/dist
+frontend/dist-ssr
+frontend/*.local
+
+**.nitro
+**.tanstack
+**.wrangler
+**.output
+**.vinxi
+**/__unconfig*
+
+frontend/todos.json
