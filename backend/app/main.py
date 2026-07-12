@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -18,6 +18,18 @@ async def lifespan(app: FastAPI):
     yield
 
 
+# API
+
+api = APIRouter(prefix="/api")
+
+api.include_router(auth.router)
+api.include_router(users.router)
+api.include_router(captures.router)
+
+api.mount("/uploads", StaticFiles(directory=get_settings().image_upload_dir))
+
+# App
+
 app = FastAPI(lifespan=lifespan)
 
 if get_settings().environment == "development":
@@ -29,8 +41,4 @@ if get_settings().environment == "development":
         allow_methods=["*"],
     )
 
-app.include_router(auth.router)
-app.include_router(users.router)
-app.include_router(captures.router)
-
-app.mount("/uploads", StaticFiles(directory=get_settings().image_upload_dir))
+app.include_router(api)
