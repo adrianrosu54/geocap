@@ -95,7 +95,7 @@ def test_put_capture(
     assert response.status_code == 200
 
     data = response.json()
-    # print(data)
+    print(data)
     assert data["description"] == "new description"
 
 

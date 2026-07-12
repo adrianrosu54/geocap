@@ -2,14 +2,15 @@ import sqlite3
 from sqlalchemy import Engine, event
 from sqlmodel import SQLModel, Session, create_engine
 
+from app.config import get_settings
 import app.models.capture
 import app.models.user
 
-SQLITE_FILE_NAME = "database.db"
-SQLITE_URL = f"sqlite:///{SQLITE_FILE_NAME}"
 
 engine = create_engine(
-    SQLITE_URL, connect_args={"check_same_thread": False}, echo="debug"
+    f"sqlite:///{get_settings().database_dir}/database.db",
+    connect_args={"check_same_thread": False},
+    echo=False if get_settings().environment == "production" else "debug",
 )
 
 
@@ -24,6 +25,7 @@ def set_sqlite_pragmas(dbapi_conn, _):
 
 
 def create_db_and_tables():
+    get_settings().database_dir.mkdir(parents=True, exist_ok=True)
     SQLModel.metadata.create_all(engine)
 
 
