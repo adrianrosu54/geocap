@@ -23,7 +23,7 @@ app = FastAPI(lifespan=lifespan)
 if get_settings().environment == "development":
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000"],
+        allow_origins=[get_settings().frontend_url],
         allow_credentials=True,
         allow_headers=["*"],
         allow_methods=["*"],

@@ -14,12 +14,14 @@ JWT_ALGORITHM = "HS256"
 security_scheme = HTTPBearer()
 
 
-def create_access_token(subject: UUID):
+def create_access_token(subject: UUID, username: str):
     expire = datetime.now(timezone.utc) + timedelta(
         minutes=get_settings().jwt_exp_minutes
     )
 
-    payload = TokenPayload(sub=str(subject), exp=str(int(expire.timestamp())))
+    payload = TokenPayload(
+        sub=str(subject), exp=str(int(expire.timestamp())), username=username
+    )
 
     encoded_jwt = jwt.encode(
         payload.model_dump(), get_settings().jwt_secret, algorithm=JWT_ALGORITHM

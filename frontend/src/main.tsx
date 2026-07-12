@@ -3,6 +3,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { login, register } from './api/auth'
 import { useAuthStore } from './stores/authStore'
+import { getCapture, getCaptures } from './api/captures'
 
 const router = createRouter({
   routeTree,
@@ -23,7 +24,7 @@ if (!rootElement.innerHTML) {
   root.render(<RouterProvider router={router} />)
 }
 
-// if (import.meta.env.DEV) {
-//   window.__api = { register, login }
-//   window.__auth = { useAuthStore }
-// }
+if (import.meta.env.DEV) {
+  window.__api = { register, login, getCaptures, getCapture }
+  window.__auth = { useAuthStore }
+}

@@ -2,16 +2,24 @@ import z from 'zod'
 
 // token
 
-const TokenSchema = z.object({
+export const TokenSchema = z.object({
   access_token: z.jwt(),
   token_type: z.literal('Bearer'),
 })
 
 export type Token = z.infer<typeof TokenSchema>
 
+export const JWTSchema = z.object({
+  sub: z.string(),
+  exp: z.string(),
+  username: z.string(),
+})
+
+export type JWTType = z.infer<typeof JWTSchema>
+
 // main entities
 
-const UserSchema = z.object({
+export const UserSchema = z.object({
   id: z.uuidv4(),
   username: z.string(),
   created_at: z.iso.datetime(),
@@ -19,7 +27,7 @@ const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>
 
-const CaptureSchema = z.object({
+export const CaptureSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   accuracy: z.number(),
@@ -30,18 +38,18 @@ const CaptureSchema = z.object({
   created_at: z.iso.datetime(),
 })
 
-export type CaptureSchema = z.infer<typeof CaptureSchema>
+export type Capture = z.infer<typeof CaptureSchema>
 
 // forms
 
-const LoginFormSchema = z.object({
+export const LoginFormSchema = z.object({
   username: z.string().min(1, 'Required'),
   password: z.string().min(8, 'At least 8 characters'),
 })
 
 export type LoginFormTypes = z.infer<typeof LoginFormSchema>
 
-const UploadFormSchema = z.object({
+export const UploadFormSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
   accuracy: z.number(),

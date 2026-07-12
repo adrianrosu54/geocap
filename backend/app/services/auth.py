@@ -49,5 +49,5 @@ def login_user(
     elif not password_hash.verify(request.password, user.password_hash):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid credentials!")
 
-    token = create_access_token(subject=user.id)
+    token = create_access_token(subject=user.id, username=user.username)
     return Token(access_token=token)

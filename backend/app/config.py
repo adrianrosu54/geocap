@@ -7,6 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     environment: Literal["production", "development"] = "production"
+    frontend_url: str = "http://localhost:3000"
 
     jwt_secret: str
     jwt_exp_minutes: int = 30

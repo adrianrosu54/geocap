@@ -14,3 +14,4 @@ class Token(BaseModel):
 class TokenPayload(BaseModel):
     sub: str
     exp: str
+    username: str
