@@ -7,7 +7,7 @@ from app.services.token_utils import JWT_ALGORITHM
 
 
 def test_get_me(auth_client: TestClient):
-    response = auth_client.get("/users/me")
+    response = auth_client.get("/api/users/me")
     data = response.json()
 
     decoded = jwt.decode(

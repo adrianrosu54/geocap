@@ -6,7 +6,7 @@ from fastapi.testclient import TestClient
 from test_captures import capture_endpoint
 from conftest import example_capture_creation
 
-upload_endpoint = "/uploads"
+upload_endpoint = "/api/uploads"
 
 
 def test_get_upload(image_file: BytesIO, auth_client: TestClient):

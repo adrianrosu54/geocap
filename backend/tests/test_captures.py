@@ -33,7 +33,7 @@ def test_get_captures(image_file: BytesIO, auth_client: TestClient):
     assert r1.status_code == 200
 
     r2 = auth_client.post(
-        "/captures",
+        capture_endpoint,
         files={"image_file": ("image.jpg", img, "image/jpeg")},
         data=example_capture_creation,
     )

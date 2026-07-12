@@ -17,7 +17,7 @@ from app.schemas.user import UserCreate
 from app.models.user import User
 from app.services.auth import password_hash
 
-capture_endpoint = "/captures"
+capture_endpoint = "/api/captures"
 
 
 TEST_DB_URL = "sqlite:///:memory:"
@@ -69,7 +69,7 @@ def auth_client_fixture(user_data: tuple[User, str], client: TestClient):
     user = user_data[0]
     password = user_data[1]
     response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         data={
             "username": user.username,
             "password": password,

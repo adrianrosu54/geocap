@@ -9,7 +9,7 @@ from conftest import example_user_creation
 
 def test_auth_register(client: TestClient):
     response = client.post(
-        "/auth/register",
+        "/api/auth/register",
         data=example_user_creation,
     )
 
@@ -25,7 +25,7 @@ def test_auth_login(user_data: tuple[User, str], client: TestClient):
     password = user_data[1]
 
     response = client.post(
-        "/auth/login",
+        "/api/auth/login",
         data={
             "username": user.username,
             "password": password,
