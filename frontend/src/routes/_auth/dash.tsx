@@ -8,5 +8,12 @@ export const Route = createFileRoute('/_auth/dash')({
 function Dashboard() {
   const { data: captures, isLoading } = useCaptures()
 
-  return <div></div>
+  return (
+    <main>
+      <h1>Dashboard</h1>
+      <p>
+        {isLoading ? 'Loading captures…' : `${captures?.length ?? 0} captures`}
+      </p>
+    </main>
+  )
 }

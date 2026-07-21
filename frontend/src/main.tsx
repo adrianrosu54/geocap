@@ -4,17 +4,20 @@ import { routeTree } from './routeTree.gen'
 import { login, register } from './api/auth'
 import { useAuthStore } from './stores/authStore'
 import { getCapture, getCaptures } from './api/captures'
+import { StrictMode } from 'react'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from './lib/queryClient'
 
 declare global {
   interface Window {
     __api: {
-      login: typeof import('./api/auth').login
-      register: typeof import('./api/auth').register
-      getCapture: typeof import('./api/captures').getCapture
-      getCaptures: typeof import('./api/captures').getCaptures
+      login: typeof login
+      register: typeof register
+      getCapture: typeof getCapture
+      getCaptures: typeof getCaptures
     }
     __auth: {
-      useAuthStore: typeof import('./stores/authStore').useAuthStore
+      useAuthStore: typeof useAuthStore
     }
   }
 }
@@ -35,7 +38,13 @@ const rootElement = document.getElementById('app')!
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
-  root.render(<RouterProvider router={router} />)
+  root.render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </StrictMode>,
+  )
 }
 
 if (import.meta.env.DEV) {

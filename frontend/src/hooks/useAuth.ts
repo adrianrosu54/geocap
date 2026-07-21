@@ -1,5 +1,6 @@
 import { login } from '#/api/auth'
-import { JWTSchema, TokenSchema, type LoginFormTypes } from '#/api/schemas'
+import { JWTSchema, TokenSchema } from '#/api/schemas'
+import type { LoginFormTypes } from '#/api/schemas'
 import { useAuthStore } from '#/stores/authStore'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -18,6 +19,7 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       setSession(data.access_token, data.jwt)
+      void navigate({ to: '/dash' })
     },
   })
 }
