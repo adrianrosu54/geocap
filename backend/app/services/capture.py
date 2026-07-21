@@ -114,3 +114,5 @@ def remove_capture(capture: Capture, session: Session):
     except IOError:
         session.rollback()
         raise HTTPException(status.HTTP_424_FAILED_DEPENDENCY, "Failed to delete file")
+
+    return "Capture deleted"

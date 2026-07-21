@@ -2,7 +2,7 @@ import { useAuthStore } from '#/stores/authStore'
 
 type FetchOptions = RequestInit & { skipAuth?: boolean }
 
-export async function apiClient(path: String, options: FetchOptions = {}) {
+export async function apiClient(path: string, options: FetchOptions = {}) {
   const { skipAuth, ...fetchOptions } = options
   const headers = new Headers(fetchOptions.headers)
 
@@ -41,6 +41,6 @@ export async function apiClient(path: String, options: FetchOptions = {}) {
 export function formBody(data: Record<string, string>) {
   return {
     body: new URLSearchParams(data),
-    Headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   }
 }

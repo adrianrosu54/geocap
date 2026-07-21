@@ -27,7 +27,7 @@ async def post_capture(
     accuracy: Annotated[float, Form()],
     description: Annotated[str, Form()],
     image_file: Annotated[UploadFile, Depends(validate_image_file)],
-    user_id: Annotated[int, Depends(validate_user_id)],
+    user_id: Annotated[UUID, Depends(validate_user_id)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return await upload_capture(
@@ -45,7 +45,7 @@ async def post_capture(
 
 @router.get("/", response_model=List[CaptureRead])
 async def get_captures(
-    user_id: Annotated[int, Depends(validate_user_id)],
+    user_id: Annotated[UUID, Depends(validate_user_id)],
     session: Annotated[Session, Depends(get_session)],
 ):
     return read_captures(user_id, session)

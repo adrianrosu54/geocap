@@ -9,6 +9,9 @@ export const getCaptures = (): Promise<Capture[]> => apiClient('/api/captures')
 export const getCapture = (capture_id: string): Promise<Capture> =>
   apiClient(`/api/captures/${capture_id}`)
 
+export const deleteCapture = (capture_id: string): Promise<string> =>
+  apiClient(`/api/captures/${capture_id}`)
+
 export const putCapture = (
   capture_id: string,
   formData: FormData,

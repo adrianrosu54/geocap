@@ -5,6 +5,20 @@ import { login, register } from './api/auth'
 import { useAuthStore } from './stores/authStore'
 import { getCapture, getCaptures } from './api/captures'
 
+declare global {
+  interface Window {
+    __api: {
+      login: typeof import('./api/auth').login
+      register: typeof import('./api/auth').register
+      getCapture: typeof import('./api/captures').getCapture
+      getCaptures: typeof import('./api/captures').getCaptures
+    }
+    __auth: {
+      useAuthStore: typeof import('./stores/authStore').useAuthStore
+    }
+  }
+}
+
 const router = createRouter({
   routeTree,
   defaultPreload: 'intent',
