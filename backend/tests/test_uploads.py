@@ -30,6 +30,6 @@ def test_get_upload(image_file: BytesIO, auth_client: TestClient):
 
 def test_get_upload_missing(auth_client: TestClient):
     value = uuid4()
-    response = auth_client.get(f"{upload_endpoint}/1/{value}.jpeg")
+    response = auth_client.get(f"{upload_endpoint}/{value}/{value}.jpeg")
 
     assert response.status_code == 404

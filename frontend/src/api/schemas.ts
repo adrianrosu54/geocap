@@ -35,7 +35,9 @@ export const CaptureSchema = z.object({
   id: z.uuidv4(),
   user_id: z.uuidv4(),
   image_path: z.string(),
-  created_at: z.iso.datetime(),
+  created_at: z.string().refine((val) => !isNaN(Date.parse(val)), {
+    error: 'Invalid date string',
+  }),
 })
 
 export type Capture = z.infer<typeof CaptureSchema>

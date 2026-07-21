@@ -26,7 +26,7 @@ api.include_router(auth.router)
 api.include_router(users.router)
 api.include_router(captures.router)
 
-api.mount("/uploads", StaticFiles(directory=get_settings().image_upload_dir))
+api.mount("/api/uploads", StaticFiles(directory=get_settings().image_upload_dir))
 
 # App
 
