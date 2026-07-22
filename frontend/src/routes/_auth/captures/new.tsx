@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form'
 
 import { UploadFormSchema } from '#/api/schemas'
 import { useCreateCapture } from '#/hooks/useCaptures'
-import { LocationPanel, type LocationState } from '#/component/LocationPanel'
+import { LocationPanel } from '#/component/LocationPanel'
+import type { LocationState } from '#/component/LocationPanel'
 
 export const Route = createFileRoute('/_auth/captures/new')({
   component: NewCapturePage,

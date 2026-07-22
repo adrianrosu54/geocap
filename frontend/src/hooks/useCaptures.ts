@@ -1,4 +1,4 @@
-import { getCaptures, postCapture } from '#/api/captures'
+import { getCapture, getCaptures, postCapture } from '#/api/captures'
 import { CaptureSchema } from '#/api/schemas'
 import { queryClient } from '#/lib/queryClient'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -8,6 +8,12 @@ export const useCaptures = () =>
   useQuery({
     queryKey: ['captures'],
     queryFn: async () => z.array(CaptureSchema).parse(await getCaptures()),
+  })
+
+export const useCapture = (captureId: string) =>
+  useQuery({
+    queryKey: ['capture', captureId],
+    queryFn: async () => CaptureSchema.parse(await getCapture(captureId)),
   })
 
 export const useCreateCapture = () =>

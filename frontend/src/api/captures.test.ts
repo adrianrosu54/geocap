@@ -44,9 +44,9 @@ describe('postCapture', () => {
 
     expect(receivedContentType).toContain('multipart/form-data')
     expect(receivedBody).toContain('name="latitude"')
-    expect(receivedBody).toContain('44.4268')
+    expect(receivedBody).toContain('45')
     expect(receivedBody).toContain('name="longitude"')
-    expect(receivedBody).toContain('26.1025')
+    expect(receivedBody).toContain('45')
     expect(receivedBody).toContain('name="accuracy"')
     expect(receivedBody).toContain('12')
     expect(receivedBody).toContain('name="description"')

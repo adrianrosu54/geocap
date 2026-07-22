@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 
 import { useCaptures } from '#/hooks/useCaptures'
+import { formatCaptureDate, getCaptureImageUrl } from '#/lib/capture'
 
 export const Route = createFileRoute('/_auth/dash')({
   component: Dashboard,
@@ -46,50 +47,52 @@ function Dashboard() {
           {!isLoading && !error && captures && captures.length > 0 && (
             <div className="divide-y divide-slate-200">
               {captures.map((capture) => (
-                <article
-                  className="grid gap-4 px-5 py-4 sm:grid-cols-[5rem_1fr_auto] sm:items-center"
+                <Link
+                  className="block hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
                   key={capture.id}
+                  params={{ id: capture.id }}
+                  to="/captures/$id"
                 >
-                  <img
-                    className="h-20 w-20 rounded-md bg-slate-100 object-cover"
-                    src={getImageUrl(capture.image_path)}
-                    alt={capture.description || 'Capture'}
-                  />
+                  <article className="grid gap-4 px-5 py-4 sm:grid-cols-[5rem_1fr_auto] sm:items-center">
+                    <img
+                      className="h-20 w-20 rounded-md bg-slate-100 object-cover"
+                      src={getCaptureImageUrl(capture.image_path)}
+                      alt={capture.description || 'Capture'}
+                    />
 
-                  <div className="min-w-0">
-                    <h2 className="truncate text-sm font-medium text-slate-900">
-                      {capture.description || 'Untitled capture'}
-                    </h2>
-                    <dl className="mt-2 grid gap-x-6 gap-y-1 text-xs text-slate-500 sm:grid-cols-2">
-                      <div>
-                        <dt className="inline font-medium text-slate-600">
-                          Location:{' '}
-                        </dt>
-                        <dd className="inline">
-                          {capture.latitude.toFixed(5)},{' '}
-                          {capture.longitude.toFixed(5)}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt className="inline font-medium text-slate-600">
-                          Accuracy:{' '}
-                        </dt>
-                        <dd className="inline">
-                          {`${Math.round(capture.accuracy)} m`}
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
+                    <div className="min-w-0">
+                      <h2 className="truncate text-sm font-medium text-slate-900">
+                        {capture.description || 'Untitled capture'}
+                      </h2>
+                      <dl className="mt-2 grid gap-x-6 gap-y-1 text-xs text-slate-500 sm:grid-cols-2">
+                        <div>
+                          <dt className="inline font-medium text-slate-600">
+                            Location:{' '}
+                          </dt>
+                          <dd className="inline">
+                            {capture.latitude.toFixed(5)},{' '}
+                            {capture.longitude.toFixed(5)}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="inline font-medium text-slate-600">
+                            Accuracy:{' '}
+                          </dt>
+                          <dd className="inline">
+                            {`${Math.round(capture.accuracy)} m`}
+                          </dd>
+                        </div>
+                      </dl>
+                    </div>
 
-                  <time
-                    className="text-xs text-slate-400 sm:self-start"
-                    dateTime={capture.created_at}
-                  >
-                    {new Intl.DateTimeFormat('en-US', {
-                      dateStyle: 'medium',
-                    }).format(new Date(capture.created_at))}
-                  </time>
-                </article>
+                    <time
+                      className="text-xs text-slate-400 sm:self-start"
+                      dateTime={capture.created_at}
+                    >
+                      {formatCaptureDate(capture.created_at)}
+                    </time>
+                  </article>
+                </Link>
               ))}
             </div>
           )}
@@ -113,12 +116,4 @@ function LoadingState() {
       ))}
     </div>
   )
-}
-
-function getImageUrl(imagePath: string) {
-  const path = imagePath
-    .split('/')
-    .map((part) => encodeURIComponent(part))
-    .join('/')
-  return `${import.meta.env.VITE_API_URL}/api/uploads/${path}`
 }
