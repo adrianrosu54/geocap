@@ -1,15 +1,12 @@
 import { register } from '#/api/auth'
-import { LoginFormSchema, type LoginFormTypes } from '#/api/schemas'
+import { LoginFormSchema } from '#/api/schemas'
+import type { LoginFormTypes } from '#/api/schemas'
 import { useAuth } from '#/hooks/useAuth'
 import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 
-export const LoginPopup = ({
-  popUpType,
-}: {
-  popUpType: 'login' | 'signup'
-}) => {
+export function LoginPopup({ popUpType }: { popUpType: 'login' | 'signup' }) {
   const navigate = useNavigate()
   const auth =
     popUpType === 'login'

@@ -14,6 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthDashRouteImport } from './routes/_auth/dash'
+import { Route as AuthCapturesNewRouteImport } from './routes/_auth/captures/new'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -39,18 +40,25 @@ const AuthDashRoute = AuthDashRouteImport.update({
   path: '/dash',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthCapturesNewRoute = AuthCapturesNewRouteImport.update({
+  id: '/captures/new',
+  path: '/captures/new',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dash': typeof AuthDashRoute
+  '/captures/new': typeof AuthCapturesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/dash': typeof AuthDashRoute
+  '/captures/new': typeof AuthCapturesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -59,13 +67,21 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/_auth/dash': typeof AuthDashRoute
+  '/_auth/captures/new': typeof AuthCapturesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/dash'
+  fullPaths: '/' | '/login' | '/register' | '/dash' | '/captures/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/dash'
-  id: '__root__' | '/' | '/_auth' | '/login' | '/register' | '/_auth/dash'
+  to: '/' | '/login' | '/register' | '/dash' | '/captures/new'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/login'
+    | '/register'
+    | '/_auth/dash'
+    | '/_auth/captures/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -112,15 +128,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthDashRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/captures/new': {
+      id: '/_auth/captures/new'
+      path: '/captures/new'
+      fullPath: '/captures/new'
+      preLoaderRoute: typeof AuthCapturesNewRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
 
 interface AuthRouteChildren {
   AuthDashRoute: typeof AuthDashRoute
+  AuthCapturesNewRoute: typeof AuthCapturesNewRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthDashRoute: AuthDashRoute,
+  AuthCapturesNewRoute: AuthCapturesNewRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
