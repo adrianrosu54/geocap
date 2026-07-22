@@ -26,11 +26,10 @@ api.include_router(auth.router)
 api.include_router(users.router)
 api.include_router(captures.router)
 
-api.mount("/api/uploads", StaticFiles(directory=get_settings().image_upload_dir))
-
 # App
 
 app = FastAPI(lifespan=lifespan)
+
 
 if get_settings().environment == "development":
     app.add_middleware(
@@ -42,3 +41,4 @@ if get_settings().environment == "development":
     )
 
 app.include_router(api)
+app.mount("/api/uploads", StaticFiles(directory=get_settings().image_upload_dir))

@@ -1,6 +1,8 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 
-import { useCapture } from '#/hooks/useCaptures'
+import { useCapture, useUpdateCaptureDescription } from '#/hooks/useCaptures'
 import { formatCaptureDate, getCaptureImageUrl } from '#/lib/capture'
 
 export const Route = createFileRoute('/_auth/captures/$id')({
@@ -10,6 +12,24 @@ export const Route = createFileRoute('/_auth/captures/$id')({
 function CaptureDetailPage() {
   const { id } = Route.useParams()
   const { data: capture, error, isLoading } = useCapture(id)
+  const updateMutation = useUpdateCaptureDescription()
+  const [isEditing, setIsEditing] = useState(false)
+  const form = useForm<DescriptionForm>({ defaultValues: { description: '' } })
+
+  useEffect(() => {
+    if (capture && !isEditing) {
+      form.reset({ description: capture.description })
+    }
+  }, [capture, form, isEditing])
+
+  const onSubmit = (values: DescriptionForm) => {
+    if (!capture) return
+
+    updateMutation.mutate(
+      { capture, description: values.description.trim() },
+      { onSuccess: () => setIsEditing(false) },
+    )
+  }
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -51,9 +71,57 @@ function CaptureDetailPage() {
                 <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                   Description
                 </p>
-                <p className="mt-2 text-base text-slate-800">
-                  {capture.description || 'No description provided.'}
-                </p>
+                {isEditing ? (
+                  <form
+                    className="mt-2 space-y-3"
+                    onSubmit={form.handleSubmit(onSubmit)}
+                  >
+                    <textarea
+                      className="block min-h-24 w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      autoFocus
+                      {...form.register('description')}
+                    />
+                    {updateMutation.error && (
+                      <p className="text-sm text-red-700">
+                        Could not update description.{' '}
+                        {updateMutation.error.message}
+                      </p>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+                        disabled={updateMutation.isPending}
+                        type="submit"
+                      >
+                        {updateMutation.isPending ? 'Saving…' : 'Save'}
+                      </button>
+                      <button
+                        className="rounded-md border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                        type="button"
+                        onClick={() => {
+                          form.reset({ description: capture.description })
+                          updateMutation.reset()
+                          setIsEditing(false)
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="mt-2 flex items-start justify-between gap-4">
+                    <p className="text-base text-slate-800">
+                      {capture.description || 'No description provided.'}
+                    </p>
+                    <button
+                      className="shrink-0 rounded-md px-2 py-1 text-sm font-medium text-blue-600 hover:bg-blue-50"
+                      type="button"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
               </div>
 
               <dl className="grid gap-5 border-t border-slate-200 pt-6 sm:grid-cols-2">
@@ -82,6 +150,8 @@ function CaptureDetailPage() {
     </main>
   )
 }
+
+type DescriptionForm = { description: string }
 
 function MetadataItem({ label, value }: { label: string; value: string }) {
   return (

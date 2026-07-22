@@ -99,7 +99,12 @@ async def update_capture(
         capture = Capture(**capture_create.model_dump(), id=capture_id)
 
     session.add(capture)
-    await save_upload(image_file, user_id)
+
+    image_id = capture.image_path.split("/")[1].split(".")[0]
+    image_id = UUID(image_id)
+
+    await save_upload(image_file, user_id, image_id)
+
     session.commit()
 
     return capture

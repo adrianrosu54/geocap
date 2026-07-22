@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 
-import { useCaptures } from '#/hooks/useCaptures'
+import { useCaptures, useDeleteCapture } from '#/hooks/useCaptures'
 import { formatCaptureDate, getCaptureImageUrl } from '#/lib/capture'
 
 export const Route = createFileRoute('/_auth/dash')({
@@ -9,6 +9,12 @@ export const Route = createFileRoute('/_auth/dash')({
 
 function Dashboard() {
   const { data: captures, error, isLoading } = useCaptures()
+  const deleteMutation = useDeleteCapture()
+
+  const handleDelete = (captureId: string) => {
+    if (!window.confirm('Delete this capture? This cannot be undone.')) return
+    deleteMutation.mutate(captureId)
+  }
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
@@ -47,13 +53,15 @@ function Dashboard() {
           {!isLoading && !error && captures && captures.length > 0 && (
             <div className="divide-y divide-slate-200">
               {captures.map((capture) => (
-                <Link
-                  className="block hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                <article
+                  className="relative border-b border-slate-200 last:border-b-0"
                   key={capture.id}
-                  params={{ id: capture.id }}
-                  to="/captures/$id"
                 >
-                  <article className="grid gap-4 px-5 py-4 sm:grid-cols-[5rem_1fr_auto] sm:items-center">
+                  <Link
+                    className="grid gap-4 px-5 py-4 pr-24 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 sm:grid-cols-[5rem_1fr_auto] sm:items-center"
+                    params={{ id: capture.id }}
+                    to="/captures/$id"
+                  >
                     <img
                       className="h-20 w-20 rounded-md bg-slate-100 object-cover"
                       src={getCaptureImageUrl(capture.image_path)}
@@ -91,10 +99,30 @@ function Dashboard() {
                     >
                       {formatCaptureDate(capture.created_at)}
                     </time>
-                  </article>
-                </Link>
+                  </Link>
+                  <button
+                    className="absolute right-5 top-5 rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={
+                      deleteMutation.isPending &&
+                      deleteMutation.variables === capture.id
+                    }
+                    type="button"
+                    onClick={() => handleDelete(capture.id)}
+                  >
+                    {deleteMutation.isPending &&
+                    deleteMutation.variables === capture.id
+                      ? 'Deleting…'
+                      : 'Delete'}
+                  </button>
+                </article>
               ))}
             </div>
+          )}
+
+          {deleteMutation.error && (
+            <p className="border-t border-slate-200 px-5 py-3 text-sm text-red-700">
+              Could not delete capture. {deleteMutation.error.message}
+            </p>
           )}
         </section>
       </div>

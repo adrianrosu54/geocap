@@ -19,9 +19,13 @@ def get_user_dir(user_id: uuid.UUID):
     return path
 
 
-async def save_upload(image_file: UploadFile, user_id: uuid.UUID):
+async def save_upload(
+    image_file: UploadFile, user_id: uuid.UUID, image_id: uuid.UUID | None = None
+):
     extention = ALLOWED_EXTENSIONS[str(image_file.content_type)]
-    filename = f"{uuid.uuid4()}{extention}"
+    filename = (
+        f"{uuid.uuid4()}{extention}" if image_id is None else f"{image_id}{extention}"
+    )
 
     destination = get_user_dir(user_id) / filename
 

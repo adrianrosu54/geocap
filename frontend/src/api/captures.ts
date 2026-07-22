@@ -10,7 +10,7 @@ export const getCapture = (capture_id: string): Promise<Capture> =>
   apiClient(`/api/captures/${capture_id}`)
 
 export const deleteCapture = (capture_id: string): Promise<string> =>
-  apiClient(`/api/captures/${capture_id}`)
+  apiClient(`/api/captures/${capture_id}`, { method: 'DELETE' })
 
 export const putCapture = (
   capture_id: string,
