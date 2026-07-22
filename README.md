@@ -8,11 +8,38 @@ in **a single Docker container**.
 
 ## Tech stack
 
-* Backend:
-  * [FastAPI](https://github.com/fastapi/fastapi) - API routing and input validation
-  * [SQLModel](https://github.com/fastapi/sqlmodel) - ORM
-  * [SQLite](https://github.com/sqlite/sqlite) - Embedded SQL Database
-  * **JWT** authentication
+- Backend:
+  - [FastAPI](https://github.com/fastapi/fastapi) - API routing and input
+    validation in **Python**
+  - [SQLModel](https://github.com/fastapi/sqlmodel) - ORM
+  - [SQLite](https://github.com/sqlite/sqlite) - Embedded SQL Database
+  - **JWT** authentication
+- Frontend:
+  - [React](https://github.com/react/react) - components and rendering for
+    **TypeScript**, built with [Vite](https://github.com/vitejs/vite)
+  - [TanStack Router](https://github.com/TanStack/router) - Type-safe routing
+    for multi-page applications
+
+## Running
+
+### Development
+
+Backend:
+
+```bash
+cd backend
+uv sync
+uv run fastapi dev
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+
+```
 
 ## License
 
