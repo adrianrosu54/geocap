@@ -3,7 +3,9 @@ export function getCaptureImageUrl(imagePath: string) {
     .split('/')
     .map((part) => encodeURIComponent(part))
     .join('/')
-  return `${import.meta.env.VITE_API_URL}/api/uploads/${path}`
+  return import.meta.env.DEV
+    ? `${import.meta.env.VITE_API_URL}/api/uploads/${path}`
+    : `/api/uploads/${path}`
 }
 
 export function formatCaptureDate(date: string) {

@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
+from secrets import token_hex
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -9,7 +10,7 @@ class Settings(BaseSettings):
     environment: Literal["production", "development"] = "production"
     frontend_url: str = "http://localhost:3000"
 
-    jwt_secret: str
+    jwt_secret: str = token_hex(64)
     jwt_exp_minutes: int = 30
 
     image_upload_dir: Path = Path("images")

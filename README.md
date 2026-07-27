@@ -3,8 +3,12 @@
 Full stack web application enabling you to capture and store pictures along
 with their location data.
 
+It covers registration, login and offers a dashboard page that lists all of
+the user's image captures, with timestamps and location information.
+
 It can easily be self hosted as it is contained
-in **a single Docker container**.
+in **a single Docker container**. It should be placed behind a reverse proxy
+(such as _NGINX_ or _Traefik_) for TLS and to enable geolocation functionality.
 
 ## Tech stack
 
@@ -20,7 +24,25 @@ in **a single Docker container**.
   - [TanStack Router](https://github.com/TanStack/router) - Type-safe routing
     for multi-page applications
 
-## Running
+## Build and run
+
+Build with docker:
+
+```bash
+git clone ...
+cd geocap
+docker build -t geocap:1.0.0 .
+```
+
+Run as a docker container:
+
+```bash
+docker run \
+    -v ./database:/app/data \
+    -v ./images:/app/images \
+    -p 8000:8000\
+    geocap:1.0.0
+```
 
 ## Development
 
@@ -31,14 +53,14 @@ cd backend
 uv sync
 ```
 
-environment:
+Environment setup:
 
 ```bash
 JWT_SECRET=... # generated with openssl rand -hex 64
 ENVIROMENT="development"
 ```
 
-run:
+Run:
 
 ```bash
 uv run fastapi dev
@@ -52,14 +74,14 @@ cd frontend
 npm install
 ```
 
-environment:
+Environment:
 
 ```bash
 VITE_API_URL="http://localhost:8000"
 NODE_ENV="development"
 ```
 
-run:
+Run:
 
 ```bash
 npm run dev
