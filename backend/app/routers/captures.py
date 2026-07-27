@@ -20,7 +20,7 @@ from app.services.user import validate_user_id
 router = APIRouter(prefix="/captures")
 
 
-@router.post("/", response_model=CaptureRead)
+@router.post("", response_model=CaptureRead)
 async def post_capture(
     latitude: Annotated[float, Form()],
     longitude: Annotated[float, Form()],
@@ -43,7 +43,7 @@ async def post_capture(
     )
 
 
-@router.get("/", response_model=List[CaptureRead])
+@router.get("", response_model=List[CaptureRead])
 async def get_captures(
     user_id: Annotated[UUID, Depends(validate_user_id)],
     session: Annotated[Session, Depends(get_session)],

@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import get_settings
 from app.database import create_db_and_tables
@@ -56,6 +57,12 @@ static_files = StaticFiles(directory=frontend_path, html=True)
 
 @app.get("/{full_path:path}")
 async def spa_fallback(request: Request, full_path: str):
-    if full_path.startswith("api/"):
+    if full_path.startswith("/api"):
         raise HTTPException(status_code=404)
-    return await static_files.get_response(full_path, request.scope)
+
+    try:
+        return await static_files.get_response(full_path, request.scope)
+    except StarletteHTTPException as e:
+        if e.status_code == 404:
+            return await static_files.get_response("index.html", request.scope)
+        raise
