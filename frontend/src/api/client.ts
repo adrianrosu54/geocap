@@ -14,8 +14,12 @@ export async function apiClient(path: string, options: FetchOptions = {}) {
     else throw new Error('Unauthorized. Make sure to log in')
   }
 
+  const url = import.meta.env.DEV
+    ? `${import.meta.env.VITE_API_URL}${path}`
+    : `${path}`
+
   try {
-    res = await fetch(`${import.meta.env.VITE_API_URL}${path}`, {
+    res = await fetch(url, {
       ...fetchOptions,
       headers,
     })

@@ -22,23 +22,48 @@ in **a single Docker container**.
 
 ## Running
 
-### Development
+## Development
 
-Backend:
+### Backend
 
 ```bash
 cd backend
 uv sync
-uv run fastapi dev
 ```
 
-Frontend:
+environment:
+
+```bash
+JWT_SECRET=... # generated with openssl rand -hex 64
+ENVIROMENT="development"
+```
+
+run:
+
+```bash
+uv run fastapi dev
+uv run pytest # run tests
+```
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev
+```
 
+environment:
+
+```bash
+VITE_API_URL="http://localhost:8000"
+NODE_ENV="development"
+```
+
+run:
+
+```bash
+npm run dev
+npm run test # run tests
 ```
 
 ## License
